@@ -25,7 +25,7 @@ using System.IO;
 using System.Reflection;
 using Weland;
 
-[assembly:AssemblyVersionAttribute("0.0.0.0")]
+[assembly:AssemblyVersionAttribute("0.0.1.0")]
 [assembly:AssemblyTitleAttribute("Map To JSON")]
 [assembly:AssemblyDescriptionAttribute("Export all map data into JSON")]
 [assembly:AssemblyCopyrightAttribute("©2023 Solra Bizna (GPL-2 or later)")]
