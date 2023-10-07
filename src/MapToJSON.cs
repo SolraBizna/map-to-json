@@ -50,13 +50,14 @@ public class Plugin {
     JObject ret = new JObject();
     ret.Add("type", light.Type.ToString());
     ret.Add("initiallyActive", light.InitiallyActive);
-    // I don't actually know what this flag means :|
+    // I don't actually know what this flag means. Unused? :|
     //ret.Add("slavedIntensities", light.SlavedIntensities);
     ret.Add("stateless", light.Stateless);
     ret.Add("phase", light.Phase);
-    if(light.TagIndex >= 0) {
+    if(light.TagIndex >= 0)
       ret.Add("tag", light.TagIndex);
-    }
+    else
+      ret.Add("tag", null);
     ret.Add("primaryActive", JsonifyLightFunction(light.PrimaryActive));
     ret.Add("secondaryActive", JsonifyLightFunction(light.SecondaryActive));
     ret.Add("becomingActive", JsonifyLightFunction(light.BecomingActive));
@@ -87,18 +88,22 @@ public class Plugin {
     ret.Add("solid", (line.Flags & LineFlags.Solid) != 0);
     ret.Add("highestAdjacentFloor", line.HighestAdjacentFloor);
     ret.Add("lowestAdjacentCeiling", line.LowestAdjacentCeiling);
-    if(line.ClockwisePolygonSideIndex >= 0) {
+    if(line.ClockwisePolygonSideIndex >= 0)
       ret.Add("clockwiseSideIndex", line.ClockwisePolygonSideIndex);
-    }
-    if(line.CounterclockwisePolygonSideIndex >= 0) {
+    else
+      ret.Add("clockwiseSideIndex", null);
+    if(line.CounterclockwisePolygonSideIndex >= 0)
       ret.Add("counterclockwiseSideIndex", line.CounterclockwisePolygonSideIndex);
-    }
-    if(line.ClockwisePolygonOwner >= 0) {
+    else
+      ret.Add("counterclockwiseSideIndex", null);
+    if(line.ClockwisePolygonOwner >= 0)
       ret.Add("clockwisePolygonOwner", line.ClockwisePolygonOwner);
-    }
-    if(line.CounterclockwisePolygonOwner >= 0) {
+    else
+      ret.Add("clockwisePolygonOwner", null);
+    if(line.CounterclockwisePolygonOwner >= 0)
       ret.Add("counterclockwisePolygonOwner", line.CounterclockwisePolygonOwner);
-    }
+    else
+      ret.Add("counterclockwisePolygonOwner", null);
     return ret;
   }
   private static JObject JsonifyShapeDescriptor(ShapeDescriptor sd) {
@@ -150,15 +155,21 @@ public class Plugin {
     ret.Add("floorTransferMode", poly.FloorTransferMode);
     ret.Add("ceilingTransferMode", poly.CeilingTransferMode);
     if(poly.MediaIndex >= 0) {
-      ret.Add("mediaIndex", poly.MediaIndex);
-      ret.Add("mediaLight", poly.MediaLight);
+      JObject media = new JObject();
+      media.Add("index", poly.MediaIndex);
+      media.Add("light", poly.MediaLight);
+      ret.Add("media", media);
+    } else {
+      ret.Add("media", null);
     }
-    if(poly.AmbientSound >= 0) {
+    if(poly.AmbientSound >= 0)
       ret.Add("ambientSound", poly.AmbientSound);
-    }
-    if(poly.RandomSound >= 0) {
+    else
+      ret.Add("ambientSound", null);
+    if(poly.RandomSound >= 0)
       ret.Add("randomSound", poly.RandomSound);
-    }
+    else
+      ret.Add("randomSound", null);
     return ret;
   }
   private static JObject JsonifyObject(MapObject obj) {
@@ -171,12 +182,12 @@ public class Plugin {
       } else {
         ret.Add("volumeFromLight", obj.Light);
       }
-      if(obj.OnPlatform) ret.Add("platformSound", true);
-      if(obj.Floats) ret.Add("floats", true);
+      ret.Add("platformSound", obj.OnPlatform);
+      ret.Add("floats", obj.Floats);
     } else {
       ret.Add("facing", obj.Facing);
-      if(obj.Invisible) ret.Add("teleportsIn", true);
-      if(obj.Floats) ret.Add("teleportsOut", true);
+      ret.Add("teleportsIn", obj.Invisible);
+      ret.Add("teleportsOut", obj.Floats);
     }
     if(obj.PolygonIndex >= 0) {
       ret.Add("polygon", obj.PolygonIndex);
@@ -186,12 +197,12 @@ public class Plugin {
     ret.Add("x", obj.X);
     ret.Add("y", obj.Y);
     ret.Add("z", obj.Z);
-    if(obj.FromCeiling) ret.Add("fromCeiling", true);
-    if(obj.Blind) ret.Add("blind", true);
-    if(obj.Deaf) ret.Add("deaf", true);
-    if(obj.NetworkOnly) ret.Add("networkOnly", true);
+    ret.Add("fromCeiling", obj.FromCeiling);
+    ret.Add("networkOnly", obj.NetworkOnly);
     if(obj.Type == ObjectType.Monster) {
       ret.Add("activationBias", obj.ActivationBias.ToString());
+      ret.Add("blind", obj.Blind);
+      ret.Add("deaf", obj.Deaf);
     }
     return ret;
   }
@@ -201,31 +212,32 @@ public class Plugin {
     ret.Add("x", def.X);
     ret.Add("y", def.Y);
     ret.Add("texture", JsonifyShapeDescriptor(def.Texture));
-    if(transferMode != 0) ret.Add("transferMode", transferMode);
+    ret.Add("transferMode", transferMode);
     ret.Add("light", lightsourceIndex);
     return ret;
   }
   private static JObject JsonifySide(Side side) {
     JObject ret = new JObject();
     ret.Add("type", side.Type.ToString());
-    ret.Add("isControlPanel", side.IsControlPanel);
     JObject primary = JsonifyTextureDefinition(side.Primary, side.PrimaryTransferMode, side.PrimaryLightsourceIndex);
-    if(primary != null) ret.Add("primary", primary);
+    ret.Add("primary", primary);
     JObject secondary = JsonifyTextureDefinition(side.Secondary, side.SecondaryTransferMode, side.SecondaryLightsourceIndex);
-    if(secondary != null) ret.Add("secondary", secondary);
+    ret.Add("secondary", secondary);
     JObject transparent = JsonifyTextureDefinition(side.Transparent, side.TransparentTransferMode, side.TransparentLightsourceIndex);
-    if(transparent != null) ret.Add("transparent", transparent);
+    ret.Add("transparent", transparent);
     if(side.IsControlPanel) {
-      ret.Add("controlPanelType", side.ControlPanelType);
-      ret.Add("controlPanelPermutation", side.ControlPanelPermutation);
-      ret.Add("controlPanelState", (side.Flags & SideFlags.ControlPanelStatus) != 0);
-      ret.Add("isRepairSwitch", (side.Flags & SideFlags.IsRepairSwitch) != 0);
-      ret.Add("isDestructiveSwitch", (side.Flags & SideFlags.IsDestructiveSwitch) != 0);
-      ret.Add("controlPanelRequiresLight", (side.Flags & SideFlags.IsLightedSwitch) != 0);
-      ret.Add("isDestructibleSwitch", (side.Flags & SideFlags.SwitchCanBeDestroyed) != 0);
-      ret.Add("isProjectileSwitch", (side.Flags & SideFlags.SwitchCanOnlyBeHitByProjectiles) != 0);
+      JObject control = new JObject();
+      control.Add("type", side.ControlPanelType);
+      control.Add("permutation", side.ControlPanelPermutation);
+      control.Add("initialState", (side.Flags & SideFlags.ControlPanelStatus) != 0);
+      control.Add("isRepairSwitch", (side.Flags & SideFlags.IsRepairSwitch) != 0);
+      control.Add("isDestructiveSwitch", (side.Flags & SideFlags.IsDestructiveSwitch) != 0);
+      control.Add("controlPanelRequiresLight", (side.Flags & SideFlags.IsLightedSwitch) != 0);
+      control.Add("isDestructibleSwitch", (side.Flags & SideFlags.SwitchCanBeDestroyed) != 0);
+      control.Add("isProjectileSwitch", (side.Flags & SideFlags.SwitchCanOnlyBeHitByProjectiles) != 0);
       // left out: .Dirty
-    }
+      ret.Add("controlPanel", control);
+    } else ret.Add("controlPanel", null);
     ret.Add("polygonIndex", side.PolygonIndex);
     ret.Add("lineIndex", side.LineIndex);
     if(side.AmbientDelta != 0) ret.Add("ambientDelta", side.AmbientDelta);
@@ -239,6 +251,7 @@ public class Plugin {
     ret.Add("speed", platform.Speed);
     ret.Add("delay", platform.Delay);
     if(platform.Tag >= 0) ret.Add("tag", platform.Tag);
+    else ret.Add("tag", null);
     /* This is a LOT of flags. One might be tempted to only include flags that
        are true, but considering the purpose of this plugin, I think it's more
        useful to maximize self-description by having every flag present. */
@@ -437,7 +450,7 @@ public class Plugin {
     json.Add("randomSounds", randomSounds);
     json.Add("mapInfo", JsonifyMapInfo(level));
     using(StreamWriter writer = new StreamWriter(path)) {
-      writer.WriteLine(JsonConvert.SerializeObject(json));
+      writer.WriteLine(JsonConvert.SerializeObject(json, Formatting.Indented));
     }
   }
   public static void GtkRun(Editor editor) {
