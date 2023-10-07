@@ -30,6 +30,225 @@ using Weland;
 [assembly:AssemblyDescriptionAttribute("Export all map data into JSON")]
 [assembly:AssemblyCopyrightAttribute("©2023 Solra Bizna (GPL-2 or later)")]
 public class Plugin {
+  class Strings {
+    // If you want custom monster/item/scenery/etc. names, put them in here.
+    // A later version of this plugin will read them from Weland.
+    private static readonly string[] MONSTER_NAMES = new string[]{
+      "Tick Energy",
+      "Tick Oxygen",
+      "Tick Kamakazi",
+      "Compiler Minor",
+      "Compiler Major",
+      "Compiler Minor Invisible",
+      "Compiler Major Invisible",
+      "Fighter Minor",
+      "Fighter Major",
+      "Fighter Minor Projectile",
+      "Fighter Major Projectile",
+      "Civilian Crew",
+      "Civilian Science",
+      "Civilian Security",
+      "Civilian Assimilated",
+      "Hummer Minor",
+      "Hummer Major",
+      "Hummer Big Minor",
+      "Hummer Big Major",
+      "Hummer Possessed",
+      "Cyborg Minor",
+      "Cyborg Major",
+      "Cyborg Flame Minor",
+      "Cyborg Flame Major",
+      "Enforcer Minor",
+      "Enforcer Major",
+      "Hunter Minor",
+      "Hunter Major",
+      "Trooper Minor",
+      "Trooper Major",
+      "Mother of all Cyborgs",
+      "Mother of all Hunters",
+      "Sewage Yeti",
+      "Water Yeti",
+      "Lava Yeti",
+      "Defender Minor",
+      "Defender Major",
+      "Juggernaut Minor",
+      "Juggernaut Major",
+      "Tiny Fighter",
+      "Tiny Bob",
+      "Tiny Yeti",
+      "Civilian Fusion Crew",
+      "Civilian Fusion Science",
+      "Civilian Fusion Security",
+      "Civilian Fusion Assimilated",
+    };
+    private static readonly string[] SCENERY_NAMES = new string[]{
+      "(L) Light Dirt",
+      "(L) Dark Dirt",
+      "(L) Bones",
+      "(L) Bone",
+      "(L) Ribs",
+      "(L) Skull",
+      "(L) Hanging Light #1",
+      "(L) Hanging Light #2",
+      "(L) Large Cylinder",
+      "(L) Small Cylinder",
+      "(L) Block #1",
+      "(L) Block #2",
+      "(L) Block #3",
+      "(W) Pistol Clip",
+      "(W) Short Light",
+      "(W) Long Light",
+      "(W) Siren",
+      "(W) Rocks",
+      "(W) Blood Drops",
+      "(W) Filtration Device",
+      "(W) Gun",
+      "(W) Bob Remains",
+      "(W) Puddles",
+      "(W) Big Puddles",
+      "(W) Security Monitor",
+      "(W) Alien Supply Can",
+      "(W) Machine",
+      "(W) Fighter's Staff",
+      "(S) Stubby Green Light",
+      "(S) Long Green Light",
+      "(S) Junk",
+      "(S) Big Antenna #1",
+      "(S) Big Antenna #2",
+      "(S) Alien Supply Can",
+      "(S) Bones",
+      "(S) Big Bones",
+      "(S) Pfhor Pieces",
+      "(S) Bob Pieces",
+      "(S) Bob Blood",
+      "(P) Green Light",
+      "(P) Small Alien Light",
+      "(P) Alien Ceiling Rod Light",
+      "(P) Bulbous Yellow Alien Object",
+      "(P) Square Grey Organic Object",
+      "(P) Pfhor Skeleton",
+      "(P) Pfhor Mask",
+      "(P) Green Stuff",
+      "(P) Hunter Shield",
+      "(P) Bones",
+      "(P) Alien Sludge",
+      "(J) Short Ceiling Light",
+      "(J) Long Light",
+      "(J) Weird Rod",
+      "(J) Pfhor Ship",
+      "(J) Sun",
+      "(J) Large Glass Container",
+      "(J) Nub #1",
+      "(J) Nub #2",
+      "(J) Lh'owon",
+      "(J) Floor Whip Antenna",
+      "(J) Ceiling Whip Antenna",
+    };
+    private static readonly string[] ITEM_NAMES = new string[]{
+      "Magnum Pistol",
+      "Magnum Magazine",
+      "Plasma Pistol",
+      "Plasma Energy Cell",
+      "Assault Rifle",
+      "AR Magazine",
+      "AR Grenade Magazine",
+      "Missile Launcher",
+      "Missile 2-Pack",
+      "Invisibility Powerup",
+      "Invincibility Powerup",
+      "Infravision Powerup",
+      "Alien Weapon",
+      "Alien Weapon Ammo",
+      "Flamethrower",
+      "Flamethrower Canister",
+      "Extravision Powerup",
+      "Oxygen Powerup",
+      "Energy Powerup x1",
+      "Energy Powerup x2",
+      "Energy Powerup x3",
+      "Shotgun",
+      "Shotgun Cartridges",
+      "S'pht Door Key",
+      "Uplink Chip",
+      "Light Blue Ball",
+      "The Ball",
+      "Violet Ball",
+      "Yellow Ball",
+      "Brown Ball",
+      "Orange Ball",
+      "Blue Ball",
+      "Green Ball",
+      "Submachine Gun",
+      "Submachine Gun Clip",
+    };
+    private static readonly string[] SOUND_NAMES = new string[] {
+      "Water",
+      "Sewage",
+      "Lava",
+      "Goo",
+      "Under Media",
+      "Wind",
+      "Waterfall",
+      "Siren",
+      "Fan",
+      "S'pht Door",
+      "S'pht Platform",
+      "Heavy S'pht Door",
+      "Heavy S'pht Platform",
+      "Light Machinery",
+      "Heavy Machinery",
+      "Transformer",
+      "Sparking Transformer",
+      "Machine Binder",
+      "Machine Bookpress",
+      "Machine Puncher",
+      "Electric Hum",
+      "Siren",
+      "Night Wind",
+      "Pfhor Door",
+      "Pfhor Platform",
+      "Pfhor Ship #1",
+      "Pfhor Ship #2",
+      "Jjaro Ship",
+    };
+    private static readonly string[] WALL_COLLECTION_NAMES = new string[] {
+      "Water",
+      "Lava",
+      "Sewage",
+      "Jjaro",
+      "Pfhor",
+    };
+    private static readonly string[] LANDSCAPE_COLLECTION_NAMES = new string[] {
+      "Day",
+      "Night",
+      "Moon",
+      "Space",
+    };
+    public static string GetMonsterName(int index) {
+      if(index < 0 || index >= MONSTER_NAMES.Length) return null;
+      else return MONSTER_NAMES[index];
+    }
+    public static string GetSceneryName(int index) {
+      if(index < 0 || index >= SCENERY_NAMES.Length) return null;
+      else return SCENERY_NAMES[index];
+    }
+    public static string GetItemName(int index) {
+      if(index < 0 || index >= ITEM_NAMES.Length) return null;
+      else return ITEM_NAMES[index];
+    }
+    public static string GetSoundName(int index) {
+      if(index < 0 || index >= SOUND_NAMES.Length) return null;
+      else return SOUND_NAMES[index];
+    }
+    public static string GetWallCollectionName(int index) {
+      if(index < 0 || index >= WALL_COLLECTION_NAMES.Length) return null;
+      else return WALL_COLLECTION_NAMES[index];
+    }
+    public static string GetLandscapeCollectionName(int index) {
+      if(index < 0 || index >= LANDSCAPE_COLLECTION_NAMES.Length) return null;
+      else return LANDSCAPE_COLLECTION_NAMES[index];
+    }
+  }
   private static string lastExportFolder = null;
   public static bool Compatible() {
     return true; // :)
@@ -175,7 +394,23 @@ public class Plugin {
   private static JObject JsonifyObject(MapObject obj) {
     JObject ret = new JObject();
     ret.Add("type", obj.Type.ToString());
-    ret.Add("subtype", obj.Index);
+    switch(obj.Type) {
+      case ObjectType.Monster:
+        ret.Add("subtype", Strings.GetMonsterName(obj.Index));
+        break;
+      case ObjectType.Scenery:
+        ret.Add("subtype", Strings.GetSceneryName(obj.Index));
+        break;
+      case ObjectType.Item:
+        ret.Add("subtype", Strings.GetItemName(obj.Index));
+        break;
+      case ObjectType.Sound:
+        ret.Add("subtype", Strings.GetSoundName(obj.Index));
+        break;
+      case ObjectType.Player:
+      case ObjectType.Goal:
+        break;
+    }
     if(obj.Type == ObjectType.Sound) {
       if(obj.UseLightForVolume) {
         ret.Add("volume", obj.Volume);
@@ -342,8 +577,8 @@ public class Plugin {
   private static JObject JsonifyMapInfo(Level level) {
     JObject ret = new JObject();
     ret.Add("name", level.Name);
-    ret.Add("wallCollection", level.Environment);
-    ret.Add("landscapeCollection", level.Landscape);
+    ret.Add("wallCollection", Strings.GetWallCollectionName(level.Environment));
+    ret.Add("landscapeCollection", Strings.GetLandscapeCollectionName(level.Landscape));
     JObject mission = new JObject();
     mission.Add("extermination", level.Extermination);
     mission.Add("exploration", level.Exploration);
